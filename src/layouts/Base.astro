@@ -1,0 +1,199 @@
+---
+import '@fontsource-variable/google-sans-flex/rond.css';
+import { Image, getImage } from 'astro:assets';
+import logo from '../assets/logo.png';
+
+const {
+  title = 'Eddy Browser: a private, lightweight browser for Android',
+  description = 'Eddy is a small, fast Android browser with no ads, analytics or telemetry. Built-in tracker blocking, real incognito, free and open source.',
+  schema,
+} = Astro.props;
+const download = 'https://github.com/arcbaseproject/Eddy/releases/latest';
+// Absolute URLs need `site` in astro.config.mjs; without it these tags are left out.
+const canonical = Astro.site && new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = Astro.site && new URL('/og.png', Astro.site).href;
+const favicon = await getImage({ src: logo, width: 64, height: 64, format: 'png' });
+const touchIcon = await getImage({ src: logo, width: 180, height: 180, format: 'png' });
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f2f7fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#071b2e" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" href={favicon.src} />
+    <link rel="apple-touch-icon" href={touchIcon.src} />
+    <title>{title}</title>
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Eddy Browser" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Eddy Browser: the browser that keeps to itself." />
+    <meta name="twitter:card" content="summary_large_image" />
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+    <script is:inline>
+      // Re-apply the palette picked on the home page before first paint.
+      try {
+        const p = JSON.parse(localStorage.getItem('palette'));
+        if (p) {
+          const r = document.documentElement;
+          r.dataset.palette = p.name;
+          r.style.setProperty('--h', p.h);
+          r.style.setProperty('--k', p.k);
+        }
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <header class="wrap nav">
+      <a href="/" class="brand" aria-label="Eddy Browser, open beta, home">
+        <Image src={logo} alt="" width={44} height={44} />
+        <span class="wordmark">Eddy Browser<small>Open Beta</small></span>
+      </a>
+      <nav>
+        <a href="/#privacy" class="link">Features</a>
+        <a href="https://github.com/arcbaseproject/Eddy" class="link">Source</a>
+        <a href={download} class="btn primary small">Download<span class="wide-only">&nbsp;APK</span></a>
+      </nav>
+    </header>
+    <slot />
+    <footer class="wrap">
+      <span>Eddy is open source under Apache 2.0.</span>
+      <nav>
+        <a href="/privacy" class="link">Privacy</a>
+        <a href="/terms" class="link">Terms</a>
+        <a href="https://github.com/arcbaseproject/Eddy" class="link">Source</a>
+      </nav>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  /* Colours come from the logo. Radius rule: pills for anything you press, 28px for tiles, 24px for screenshots. */
+  :root {
+    --bg: #f2f7fb;
+    --surface: #fbfdff;
+    --ink: #0b2e4f;
+    --muted: #45617a;
+    --line: #d6e3ed;
+    --sky: #c4e8fb;
+    --blue: #5aa7ef;
+    --teal: #46b3ae;
+    --tile-sky: #c4e8fb;
+    --tile-teal: #a3dcd7;
+    --btn: #0b2e4f;
+    --on-btn: #f2f7fb;
+    --shadow: 0 30px 60px -20px rgb(11 46 79 / .28);
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #071b2e;
+      --surface: #0d2740;
+      --ink: #e4f2fb;
+      --muted: #a2bbcf;
+      --line: #1a3a58;
+      --tile-sky: #15405f;
+      --tile-teal: #11443f;
+      --btn: #c4e8fb;
+      --on-btn: #0b2e4f;
+      --shadow: 0 30px 60px -20px rgb(0 8 20 / .7);
+    }
+  }
+  /* A picked palette (see index.astro) swaps the tokens for tones of one hue, using the same recipe as Palette.kt. */
+  :root[data-palette] {
+    --bg: hsl(var(--h) calc(var(--k) * 30%) 97%);
+    --surface: hsl(var(--h) calc(var(--k) * 30%) 99%);
+    --ink: hsl(var(--h) calc(var(--k) * 40%) 14%);
+    --muted: hsl(var(--h) calc(var(--k) * 14%) 32%);
+    --line: hsl(var(--h) calc(var(--k) * 16%) 86%);
+    --sky: hsl(var(--h) calc(var(--k) * 80%) 88%);
+    --blue: hsl(var(--h) calc(var(--k) * 55% + 10%) 50%);
+    --teal: hsl(calc(var(--h) + 62) calc(var(--k) * 42% + 5%) 55%);
+    --tile-sky: hsl(var(--h) calc(var(--k) * 80%) 90%);
+    --tile-teal: hsl(calc(var(--h) + 62) calc(var(--k) * 62%) 88%);
+    --btn: hsl(var(--h) calc(var(--k) * 55% + 10%) 36%);
+    --on-btn: hsl(var(--h) calc(var(--k) * 30%) 98%);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-palette] {
+      --bg: hsl(var(--h) calc(var(--k) * 25%) 9%);
+      --surface: hsl(var(--h) calc(var(--k) * 25%) 14%);
+      --ink: hsl(var(--h) calc(var(--k) * 30%) 92%);
+      --muted: hsl(var(--h) calc(var(--k) * 15%) 72%);
+      --line: hsl(var(--h) calc(var(--k) * 20%) 22%);
+      --sky: hsl(var(--h) calc(var(--k) * 70%) 70%);
+      --blue: hsl(var(--h) calc(var(--k) * 70%) 70%);
+      --teal: hsl(calc(var(--h) + 62) calc(var(--k) * 45%) 50%);
+      --tile-sky: hsl(var(--h) calc(var(--k) * 40%) 24%);
+      --tile-teal: hsl(calc(var(--h) + 62) calc(var(--k) * 35%) 20%);
+      --btn: hsl(var(--h) calc(var(--k) * 80%) 82%);
+      --on-btn: hsl(var(--h) calc(var(--k) * 60%) 15%);
+    }
+  }
+  body, .tile, .swatches button, .blob { transition: background-color .4s, color .4s, border-color .4s; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 17px/1.55 'Google Sans Flex Variable', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: clip;
+  }
+  h1, h2, h3 { font-variation-settings: 'ROND' 100; font-weight: 720; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; height: auto; }
+  :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 8px; }
+  .wrap { max-width: 1160px; margin-inline: auto; padding: 0 24px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 48px; padding: 0 26px; border-radius: 999px;
+    font-weight: 600; text-decoration: none; white-space: nowrap;
+    border: 1.5px solid var(--line);
+    transition: transform .2s cubic-bezier(.2, 1.4, .4, 1), background-color .2s;
+  }
+  /* Hover lifts only where there is a real pointer; on touch they would stick after a tap. */
+  @media (hover: hover) { .btn:hover { transform: translateY(-2px); } }
+  .btn:active { transform: scale(.97); }
+  .btn.primary { background: var(--btn); color: var(--on-btn); border-color: transparent; }
+  .btn.small { min-height: 42px; padding: 0 20px; font-size: 15px; }
+  .link { text-decoration: none; color: var(--muted); font-weight: 500; padding: 10px 4px; }
+  @media (hover: hover) { .link:hover { color: var(--ink); } }
+
+  .nav, footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .nav { height: 72px; }
+  .nav nav, footer nav { display: flex; align-items: center; gap: 18px; }
+  .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; text-decoration: none; font-variation-settings: 'ROND' 100; }
+  .brand img { border-radius: 11px; }
+  /* Same layout as docs/banner.png: name on top, "Open Beta" tucked under its right edge. */
+  .wordmark { display: flex; flex-direction: column; align-items: flex-end; font-size: 23px; font-weight: 600; line-height: 1; letter-spacing: -.01em; white-space: nowrap; }
+  .wordmark small { margin-top: 3px; font-size: 12px; font-weight: 500; letter-spacing: 0; color: var(--muted); }
+  footer { padding-block: 36px max(36px, env(safe-area-inset-bottom)); margin-top: 96px; border-top: 1px solid var(--line); color: var(--muted); font-size: 15px; flex-wrap: wrap; }
+  /* The header only fits the name, both links and the button from 720px up. */
+  @media (max-width: 720px) { .nav .link { display: none; } }
+  @media (max-width: 560px) {
+    .wide-only { display: none; }
+    .brand { gap: 10px; }
+    .brand img { width: 36px; height: 36px; border-radius: 9px; }
+    .wordmark { font-size: 19px; }
+    .wordmark small { font-size: 11px; }
+    .wrap { padding: 0 18px; }
+    .nav { height: 64px; }
+    footer { margin-top: 72px; flex-direction: column; align-items: flex-start; gap: 8px; }
+    footer nav { margin-left: -4px; gap: 20px; }
+  }
+</style>

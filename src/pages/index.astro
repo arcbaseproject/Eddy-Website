@@ -1,0 +1,264 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import logo from '../assets/logo.png';
+import home from '../assets/screenshots/home.png';
+import browsing from '../assets/screenshots/browsing.png';
+import menu from '../assets/screenshots/menu.png';
+import tabs from '../assets/screenshots/tabs.png';
+import incognito from '../assets/screenshots/incognito.png';
+
+const download = 'https://github.com/arcbaseproject/Eddy/releases/latest';
+const source = 'https://github.com/arcbaseproject/Eddy';
+
+// Same hues and saturation as Palette.kt, so the swatches match the app.
+const palettes = [
+  ['Orchid', 268, 1], ['Ocean', 208, 1], ['Meadow', 142, 0.85],
+  ['Ember', 18, 1], ['Rose', 338, 1], ['Slate', 215, 0.25],
+] as const;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Eddy Browser',
+  description: 'A small, fast Android browser with no ads, analytics or telemetry.',
+  applicationCategory: 'BrowserApplication',
+  operatingSystem: 'Android 10 or newer',
+  downloadUrl: download,
+  license: 'https://www.apache.org/licenses/LICENSE-2.0',
+  codeRepository: source,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+---
+<Base schema={schema}>
+  <main>
+    <section class="wrap hero">
+      <div class="hero-copy">
+        <h1>The browser that keeps to itself.</h1>
+        <p class="lead">Eddy is a small, fast Android browser with no ads, analytics or telemetry. Your history stays on your phone.</p>
+        <div class="cta">
+          <a class="btn primary" href={download}>Download APK</a>
+          <a class="btn" href={source}>View source</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <span class="blob one"></span>
+        <span class="blob two"></span>
+        <Image src={home} alt="" widths={[300, 600]} sizes="300px" loading="eager" class="phone" />
+      </div>
+    </section>
+
+    <section id="privacy" class="wrap">
+      <h2>Private without trying.</h2>
+      <div class="bento">
+        <article class="tile inc">
+          <h3>Incognito that forgets</h3>
+          <p>Private tabs use their own browser profile. Its cookies and storage are deleted when the last private tab closes.</p>
+          <Image src={incognito} alt="An incognito tab in Eddy" width={260} class="peek" />
+        </article>
+        <article class="tile blk">
+          <h3>Trackers blocked</h3>
+          <p>Ad and tracker hosts from other sites are blocked. The lists update every day, and you can turn blocking off for any site.</p>
+        </article>
+        <article class="tile tel">
+          <h3>Nothing sent home</h3>
+          <p>No accounts, ads, analytics or crash reports.</p>
+        </article>
+        <article class="tile siz">
+          <h3>About 3.5 MB</h3>
+          <p>Eddy uses the WebView already on your phone, so there is no engine to download.</p>
+        </article>
+        <article class="tile tab">
+          <h3>Easy on memory</h3>
+          <p>Four tabs stay loaded. The rest sleep, then come back with their history.</p>
+          <Image src={tabs} alt="The tab switcher in Eddy" width={260} class="peek" />
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap hand">
+      <div>
+        <h2>Made for one hand.</h2>
+        <p class="lead">The address bar, tabs and menu sit at the bottom, where your thumb already is. Prefer it on top? Move it in Settings.</p>
+      </div>
+      <div class="pair">
+        <Image src={browsing} alt="Browsing a page with the bottom bar" width={280} class="shot back" />
+        <Image src={menu} alt="The page menu open from the bottom bar" width={280} class="shot front" />
+      </div>
+    </section>
+
+    <section class="wrap yours">
+      <h2>Make it yours.</h2>
+      <p class="lead">Match your wallpaper, or pick one of six palettes. Light, dark and pure-black themes are built in. Tap a palette to try it here.</p>
+      <ul class="swatches">
+        {palettes.map(([name, hue, sat]) => (
+          <li>
+            <button type="button" aria-pressed="false" data-name={name} data-h={hue} data-k={sat}>
+              <span style={`background: hsl(${hue} ${60 * sat}% 50%)`}></span>{name}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="wrap end">
+      <Image src={logo} alt="" width={96} height={96} />
+      <h2>Try Eddy.</h2>
+      <p class="lead">Free and open source, for Android 10 or newer. Eddy is in beta, so expect rough edges.</p>
+      <div class="cta">
+        <a class="btn primary" href={download}>Download APK</a>
+        <a class="btn" href={source}>View source</a>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<script>
+  // Tap a palette to theme the page; tap it again to go back to Eddy's own colours.
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.swatches button');
+  const sync = () => buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.name === root.dataset.palette)));
+  buttons.forEach(b => b.addEventListener('click', () => {
+    const { name, h, k } = b.dataset;
+    let saved = null;
+    if (root.dataset.palette === name) {
+      delete root.dataset.palette;
+    } else {
+      root.dataset.palette = name;
+      root.style.setProperty('--h', h!);
+      root.style.setProperty('--k', k!);
+      saved = JSON.stringify({ name, h, k });
+    }
+    try { saved ? localStorage.setItem('palette', saved) : localStorage.removeItem('palette'); } catch {}
+    sync();
+  }));
+  sync();
+</script>
+
+<style>
+  h1 { font-size: clamp(44px, 6.4vw, 76px); line-height: 1.02; letter-spacing: -0.025em; font-weight: 780; }
+  h2 { font-size: clamp(32px, 4vw, 48px); line-height: 1.08; letter-spacing: -0.02em; }
+  h3 { font-size: 22px; line-height: 1.2; }
+  .lead { font-size: 20px; color: var(--muted); max-width: 34ch; margin-top: 20px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; }
+  section + section { margin-top: 128px; }
+
+  /* Hero: copy left, phone on a morphing shape right, like the app's welcome tour. */
+  .hero {
+    display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 40px;
+    min-height: min(760px, calc(100dvh - 72px)); padding-block: 24px 48px;
+  }
+  .hero-art { position: relative; display: grid; place-items: center; min-height: 600px; }
+  .phone { position: relative; width: 300px; border-radius: 34px; border: 6px solid var(--surface); box-shadow: var(--shadow); }
+  .blob { position: absolute; }
+  .blob.one {
+    width: 440px; height: 440px; background: var(--sky);
+    border-radius: 58% 42% 51% 49% / 44% 56% 44% 56%;
+    animation: morph 14s ease-in-out infinite alternate;
+  }
+  .blob.two {
+    width: 190px; height: 190px; right: 4%; bottom: 8%; background: var(--teal);
+    border-radius: 42% 58% 38% 62% / 55% 45% 55% 45%;
+    animation: morph 11s ease-in-out -4s infinite alternate-reverse;
+  }
+  @keyframes morph {
+    50% { border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%; transform: rotate(18deg) scale(1.04); }
+    100% { border-radius: 63% 37% 45% 55% / 57% 38% 62% 43%; transform: rotate(-12deg); }
+  }
+  .hero-copy > * { animation: rise .8s cubic-bezier(.2, .9, .3, 1) both; }
+  .hero-copy > :nth-child(2) { animation-delay: .08s; }
+  .hero-copy > :nth-child(3) { animation-delay: .16s; }
+  .phone { animation: rise 1s cubic-bezier(.2, .9, .3, 1) .12s both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+  @media (prefers-color-scheme: dark) { .blob { opacity: .55; } }
+  @media (prefers-reduced-motion: reduce) {
+    .blob, .hero-copy > *, .phone { animation: none; }
+  }
+
+  /* Privacy bento: two tall screenshot tiles framing three text tiles. */
+  .bento {
+    display: grid; gap: 16px; margin-top: 40px;
+    grid-template-columns: 1.1fr 1fr 1fr 1.1fr;
+    grid-template-areas: 'inc blk blk tab' 'inc tel siz tab';
+  }
+  .tile {
+    display: flex; flex-direction: column; gap: 10px; overflow: hidden;
+    padding: 28px; border-radius: 28px; background: var(--surface); border: 1px solid var(--line);
+  }
+  .tile p { color: var(--muted); }
+  .inc { grid-area: inc; } .tab { grid-area: tab; }
+  .blk { grid-area: blk; background: var(--tile-sky); border-color: transparent; justify-content: flex-end; min-height: 230px; }
+  .tel { grid-area: tel; background: var(--tile-teal); border-color: transparent; }
+  .siz { grid-area: siz; }
+  .blk p, .tel p { color: var(--ink); opacity: .85; }
+  .peek { width: 78%; margin: 18px auto -64px; border-radius: 24px; border: 5px solid var(--bg); box-shadow: var(--shadow); }
+
+  /* One hand: copy left, two overlapping screenshots right. */
+  .hand { display: grid; grid-template-columns: 1fr 1.1fr; align-items: center; gap: 40px; }
+  .pair { position: relative; height: 560px; }
+  .shot { position: absolute; width: 250px; border-radius: 24px; border: 5px solid var(--surface); box-shadow: var(--shadow); }
+  .shot.back { left: 6%; top: 0; transform: rotate(-4deg); }
+  .shot.front { right: 6%; top: 40px; transform: rotate(3deg); }
+
+  /* Make it yours: centred palette row. */
+  .yours { text-align: center; }
+  .yours .lead { margin-inline: auto; }
+  .swatches { list-style: none; padding: 0; margin: 40px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .swatches button {
+    display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 18px 8px 8px;
+    border-radius: 999px; background: var(--surface); border: 1px solid var(--line);
+    font: inherit; font-weight: 600; color: var(--ink); cursor: pointer;
+  }
+  @media (hover: hover) { .swatches button:hover { border-color: var(--muted); } }
+  .swatches button:active { transform: scale(.97); }
+  .swatches button[aria-pressed='true'] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+  .swatches span { width: 32px; height: 32px; border-radius: 50%; }
+
+  .end { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .end h2 { margin-top: 24px; }
+  .end .lead { max-width: 40ch; }
+
+  @media (max-width: 900px) {
+    .hero, .hand { grid-template-columns: 1fr; }
+    .hero { min-height: 0; padding-top: 32px; }
+    .hero-art { min-height: 480px; }
+    .blob.one { width: 340px; height: 340px; }
+    .blob.two { width: 140px; height: 140px; }
+    .phone { width: 240px; }
+    .bento { grid-template-columns: 1fr 1fr; grid-template-areas: 'blk blk' 'inc tab' 'tel siz'; }
+    .pair { height: 480px; max-width: 460px; width: 100%; margin-inline: auto; }
+    .shot { width: 210px; }
+    section + section { margin-top: 96px; }
+  }
+  @media (max-width: 560px) {
+    section + section { margin-top: 72px; }
+    .lead { font-size: 18px; margin-top: 16px; }
+    .cta { margin-top: 28px; }
+    .cta .btn { flex: 1 1 140px; }
+
+    /* Hero: phone and blobs sized so the copy and most of the phone fit on one screen. */
+    .hero { padding-top: 20px; gap: 24px; }
+    .hero-art { min-height: 400px; }
+    .blob.one { width: 290px; height: 290px; }
+    .blob.two { width: 120px; height: 120px; right: 2%; }
+    .phone { width: 200px; border-radius: 26px; border-width: 5px; }
+
+    /* Bento: short text tiles pair up, screenshot tiles show only the top of the screen. */
+    .bento { gap: 12px; margin-top: 28px; grid-template-columns: 1fr 1fr; grid-template-areas: 'blk blk' 'inc inc' 'tel siz' 'tab tab'; }
+    .tile { padding: 22px; border-radius: 24px; }
+    .tel, .siz { padding: 18px; }
+    .tel h3, .siz h3 { font-size: 18px; }
+    .tel p, .siz p { font-size: 15px; }
+    .blk { min-height: 0; }
+    .peek { width: 58%; height: 230px; object-fit: cover; object-position: top; margin: 12px auto -24px; border-width: 4px; border-bottom: 0; border-radius: 20px 20px 0 0; }
+
+    /* One hand: smaller fanned screenshots that stay inside the screen. */
+    .pair { height: 350px; max-width: 340px; }
+    .shot { width: 44%; border-width: 4px; border-radius: 18px; }
+    .shot.back { left: 3%; } .shot.front { right: 3%; top: 30px; }
+
+    .swatches { gap: 10px; margin-top: 28px; }
+    .swatches button { padding-right: 16px; }
+    .end img { width: 72px; height: 72px; }
+  }
+</style>

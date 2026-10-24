@@ -1,0 +1,36 @@
+---
+import Prose from '../layouts/Prose.astro';
+
+// Release notes come from GitHub at build time, so rebuild the site after each release.
+// shortcut: reads one page of 100 releases, follow the Link header once there are more.
+const headers: Record<string, string> = { Accept: 'application/vnd.github.html+json' };
+if (import.meta.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${import.meta.env.GITHUB_TOKEN}`;
+const res = await fetch('https://api.github.com/repos/arcbaseproject/Eddy/releases?per_page=100', { headers });
+// Fail the build rather than publish an empty changelog.
+if (!res.ok) throw new Error(`GitHub releases request failed: ${res.status} ${await res.text()}`);
+const releases = (await res.json() as { tag_name: string; name: string; html_url: string; published_at: string; draft: boolean; body_html?: string }[])
+  .filter(r => !r.draft);
+
+const date = new Intl.DateTimeFormat('en', { dateStyle: 'long', timeZone: 'UTC' });
+// The release title is the h2, so headings inside the notes drop to h3.
+const notes = (html = '') => html.replace(/<(\/?)h[1-6]\b/g, '<$1h3');
+---
+<Prose title="Changelog | Eddy Browser" description="Release notes for every Eddy Browser release, newest first.">
+  <h1>Changelog</h1>
+  <p>Release notes for every Eddy release, newest first. Each one is a beta, published on the <a href="https://github.com/arcbaseproject/Eddy/releases">releases page</a>.</p>
+  {releases.map(r => (
+    <section class="release" id={r.tag_name}>
+      <h2><a href={r.html_url}>{r.name || r.tag_name}</a></h2>
+      <p><time datetime={r.published_at}>{date.format(new Date(r.published_at))}</time></p>
+      <Fragment set:html={notes(r.body_html)} />
+    </section>
+  ))}
+</Prose>
+
+<style>
+  .release { scroll-margin-top: 24px; }
+  .release h2 a { color: inherit; text-decoration: none; }
+  @media (hover: hover) { .release h2 a:hover { text-decoration: underline; } }
+  .release :global(h3) { font-size: 18px; color: var(--ink); margin: 24px 0 8px; }
+  .release time { font-size: 15px; }
+</style>

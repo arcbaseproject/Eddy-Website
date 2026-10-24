@@ -1,0 +1,194 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import incognito from '../assets/screenshots/incognito.png';
+import browsing from '../assets/screenshots/browsing.png';
+import menu from '../assets/screenshots/menu.png';
+import tabs from '../assets/screenshots/tabs.png';
+
+const download = 'https://github.com/arcbaseproject/Eddy/releases';
+
+const groups = [
+  {
+    id: 'privacy', title: 'Private by default', shot: incognito, alt: 'An incognito tab in Eddy',
+    intro: 'Eddy blocks ads and trackers as pages load. Your history stays on your phone.',
+    items: [
+      ['Ad and tracker blocking', 'Filter lists stop trackers, pop-up ads, ad redirects and YouTube video ads. Add your own lists, or turn blocking off for one site.'],
+      ['Incognito with its own profile', 'Private tabs keep cookies and storage apart, and Eddy deletes them when you close the last private tab. Screenshots and the recents screen skip private tabs.'],
+      ['HTTPS-only mode', 'Eddy warns you before it opens a plain http page.'],
+      ['Third-party cookies off', 'Sites can’t set cookies for other domains unless you allow it.'],
+      ['Do Not Track and GPC', 'Eddy can send Do Not Track and Global Privacy Control signals to the sites you visit.'],
+      ['Clear when you leave', 'Turn this on to wipe history, cookies, cache and open tabs each time you leave the app.'],
+      ['Per-site controls', 'Set JavaScript, pop-ups, cookies, permissions and text size for each site.'],
+      ['No accounts or analytics', 'Eddy has no ads, telemetry or crash reports, and needs no sign-up.'],
+    ],
+  },
+  {
+    id: 'one-hand', title: 'Built for one hand', shot: browsing, alt: 'Browsing a page with the bottom bar',
+    intro: 'The address bar, tabs and menu sit at the bottom, in reach of your thumb.',
+    items: [
+      ['One floating bar', 'Address, tabs and menu share a single bar. Move it to the top in Settings if you prefer.'],
+      ['Swipe between tabs', 'Swipe the address bar left or right to change tabs, or up to open the tab list.'],
+      ['A tab list you can sort', 'Long-press a tab to drag it into place. Swipe a card away to close it.'],
+      ['Back to the opener', 'Press Back in a tab a link opened and you return to the page that opened it.'],
+      ['Your colours', 'Match your wallpaper or pick one of six palettes, in light, dark or pure black.'],
+      ['Your icon and start page', 'Choose a different app icon, and hide the start-page shortcuts with a long-press.'],
+      ['Search widget', 'Put a search bar with voice and incognito buttons on your home screen.'],
+    ],
+  },
+  {
+    id: 'reading', title: 'Reading and files', shot: menu, alt: 'The page menu open from the bottom bar',
+    intro: 'Read, listen, translate and save pages from the menu.',
+    items: [
+      ['Reader mode', 'Strip a page down to the article text.'],
+      ['Read aloud', 'Your phone’s speech engine reads the page to you.'],
+      ['Translate', 'Tap Translate in the menu and pick a language. Eddy opens the page through Google Translate.'],
+      ['Print or save as PDF', 'Send any page to a printer or keep it as a PDF.'],
+      ['Built-in viewers', 'PDFs and text files you download open inside Eddy.'],
+      ['Resumable downloads', 'Pause, resume and retry. Files keep the name the site gives them.'],
+      ['View source', 'Read a page’s markup with indents, colours and line numbers.'],
+    ],
+  },
+  {
+    id: 'everyday', title: 'Everyday browsing', shot: tabs, alt: 'The tab switcher in Eddy',
+    intro: 'Bookmarks, passwords and tabs that stay light on memory.',
+    items: [
+      ['Passwords', 'Eddy offers to save a password after you sign in, encrypts it and locks it behind your screen lock. Autofill waits for your tap. Import and export use Chrome’s CSV format.'],
+      ['Bookmarks', 'Sort them into folders, and import or export the standard HTML file.'],
+      ['History', 'Search the pages you visited.'],
+      ['Search', 'Pick your engine, with suggestions and voice input.'],
+      ['Desktop site', 'Load the full desktop layout of a page.'],
+      ['Background playback', 'Video and audio keep playing when you leave the app or turn the screen off.'],
+      ['App links', 'Links to TikTok, WhatsApp, Telegram, the Play Store and other apps open in those apps.'],
+      ['Light on memory', 'Four tabs stay loaded. The rest sleep and come back with their history.'],
+    ],
+  },
+];
+
+const connections = [
+  ['Filter lists', 'adguardteam.github.io and raw.githubusercontent.com, about once a day. Turn them off in Settings > Privacy and security > Filter lists.'],
+  ['Your search engine', 'Suggestions as you type, if you turn them on.'],
+  ['Google Translate', 'The page address, when you tap Translate.'],
+  ['Web3Forms', 'api.web3forms.com, when you tap Send in Settings > Support.'],
+];
+---
+<Base title="Features | Eddy Browser" description="What Eddy Browser does: ad and tracker blocking, incognito with its own profile, reader mode, translation, downloads, passwords and every network connection it makes.">
+  <main class="wrap">
+    <section class="intro">
+      <h1>What Eddy does.</h1>
+      <p class="lead">A 3.5&nbsp;MB Android browser built on the WebView already on your phone.</p>
+      <nav aria-label="Feature groups">
+        <ul class="jump">
+          {groups.map(g => <li><a class="btn small" href={`#${g.id}`}>{g.title}</a></li>)}
+          <li><a class="btn small" href="#connections">Connections</a></li>
+        </ul>
+      </nav>
+    </section>
+
+    {groups.map(g => (
+      <section class="group" id={g.id} aria-labelledby={`${g.id}-title`}>
+        <div class="side">
+          <h2 id={`${g.id}-title`}>{g.title}</h2>
+          <p>{g.intro}</p>
+          <Image src={g.shot} alt={g.alt} widths={[220, 440]} sizes="220px" class="shot" />
+        </div>
+        <dl class="panel">
+          {g.items.map(([name, text]) => <div><dt>{name}</dt><dd>{text}</dd></div>)}
+        </dl>
+      </section>
+    ))}
+
+    <section class="ledger" id="connections" aria-labelledby="connections-title">
+      <h2 id="connections-title">Every connection Eddy makes</h2>
+      <p>Besides the pages you open, Eddy talks to these four, and only for the reason shown. The <a href="/privacy">privacy policy</a> has the details.</p>
+      <dl>
+        {connections.map(([name, text]) => <div><dt>{name}</dt><dd>{text}</dd></div>)}
+      </dl>
+    </section>
+
+    <section class="limits" aria-labelledby="limits-title">
+      <h2 id="limits-title">Known limitations</h2>
+      <ul>
+        <li>No website notifications: Android’s WebView doesn’t support them.</li>
+        <li>Blocking works on domains and URLs. Eddy doesn’t hide page elements.</li>
+        <li><code>blob:</code> downloads and password autofill need a recent Android System WebView.</li>
+      </ul>
+    </section>
+
+    <section class="end">
+      <h2>Try it on your phone.</h2>
+      <p>Free and open source, for Android 10 or newer.</p>
+      <div class="cta">
+        <a class="btn primary" href={download}>Download APK</a>
+        <a class="btn" href="/install">Install guide</a>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  h1 { font-size: clamp(44px, 6.4vw, 76px); line-height: 1.02; letter-spacing: -0.025em; font-weight: 780; }
+  h2 { font-size: clamp(28px, 3.4vw, 40px); line-height: 1.1; letter-spacing: -0.02em; }
+  .lead { font-size: 20px; color: var(--muted); max-width: 40ch; margin-top: 20px; }
+
+  .intro { padding-block: 48px 24px; }
+  /* Same entrance as the home hero: heading, lead and jump links rise in turn. */
+  .intro > * { animation: rise .8s cubic-bezier(.2, .9, .3, 1) both; }
+  .intro > :nth-child(2) { animation-delay: .08s; }
+  .intro > :nth-child(3) { animation-delay: .16s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+  @media (prefers-reduced-motion: reduce) { .intro > * { animation: none; } }
+  .jump { list-style: none; padding: 0; margin: 32px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .jump .btn { background: var(--surface); }
+
+  /* Each group: sticky heading and screenshot on the left, one panel of features on the right. */
+  .group { display: grid; grid-template-columns: 300px 1fr; gap: 56px; margin-top: 96px; scroll-margin-top: 24px; }
+  .side { position: sticky; top: 24px; align-self: start; }
+  .side p { color: var(--muted); margin-top: 12px; }
+  .shot { width: 220px; margin-top: 28px; border-radius: 24px; border: 5px solid var(--surface); box-shadow: var(--shadow); }
+
+  .panel { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 28px; overflow: hidden; }
+  .panel div { display: grid; grid-template-columns: 220px 1fr; gap: 24px; padding: 20px 28px; }
+  .panel div + div { border-top: 1px solid var(--line); }
+  dt { font-weight: 600; color: var(--ink); }
+  dd { margin: 0; color: var(--muted); }
+
+  /* The page's one loud block: every host Eddy contacts, on the teal tile colour. */
+  .ledger { margin-top: 128px; padding: 48px; border-radius: 28px; background: var(--tile-teal); scroll-margin-top: 24px; }
+  .ledger > p { max-width: 52ch; margin-top: 12px; }
+  .ledger a { text-underline-offset: 3px; }
+  .ledger dl { margin: 36px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ledger dl div { padding: 24px; border-radius: 24px; background: var(--bg); }
+  .ledger dt { font-size: 20px; font-variation-settings: 'ROND' 100; }
+  .ledger dd { margin-top: 6px; overflow-wrap: anywhere; }
+
+  .limits { margin-top: 96px; max-width: 720px; }
+  .limits ul { margin: 16px 0 0; padding-left: 20px; color: var(--muted); }
+  .limits li + li { margin-top: 8px; }
+  .limits code { font-size: .9em; }
+
+  .end { margin-top: 96px; }
+  .end p { color: var(--muted); margin-top: 12px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+
+  @media (max-width: 900px) {
+    .group { grid-template-columns: 1fr; gap: 24px; margin-top: 72px; }
+    .side { position: static; }
+    .shot { display: none; }
+    .panel div { grid-template-columns: 1fr; gap: 4px; }
+  }
+  @media (max-width: 560px) {
+    .intro { padding-top: 24px; }
+    .lead { font-size: 18px; margin-top: 16px; }
+    /* Jump links scroll sideways in one row, running to the screen edges. */
+    .jump { flex-wrap: nowrap; overflow-x: auto; margin: 24px -18px 0; padding: 0 18px 4px; scrollbar-width: none; overscroll-behavior-x: contain; }
+    .jump::-webkit-scrollbar { display: none; }
+    .jump li { flex-shrink: 0; }
+    .panel { border-radius: 24px; }
+    .panel div { padding: 18px 20px; }
+    .ledger { margin-top: 96px; padding: 28px 20px; border-radius: 24px; }
+    .ledger dl { grid-template-columns: 1fr; gap: 12px; margin-top: 24px; }
+    .ledger dl div { padding: 20px; }
+    .cta .btn { flex: 1 1 140px; }
+  }
+</style>

@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 
-// Three pages; a hand-written list beats a sitemap integration.
-const pages = ['/', '/privacy/', '/terms/'];
+// Six pages; a hand-written list beats a sitemap integration.
+const pages = ['/', '/features/', '/install/', '/changelog/', '/privacy/', '/terms/'];
 
 export const GET: APIRoute = ({ site }) => {
   // Empty until `site` is set in astro.config.mjs, since sitemap URLs must be absolute.

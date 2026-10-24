@@ -8,7 +8,7 @@ import menu from '../assets/screenshots/menu.png';
 import tabs from '../assets/screenshots/tabs.png';
 import incognito from '../assets/screenshots/incognito.png';
 
-const download = 'https://github.com/arcbaseproject/Eddy/releases/latest';
+const download = 'https://github.com/arcbaseproject/Eddy/releases';
 const source = 'https://github.com/arcbaseproject/Eddy';
 
 // Same hues and saturation as Palette.kt, so the swatches match the app.
@@ -57,8 +57,8 @@ const schema = {
           <Image src={incognito} alt="An incognito tab in Eddy" width={260} class="peek" />
         </article>
         <article class="tile blk">
-          <h3>Trackers blocked</h3>
-          <p>Ad and tracker hosts from other sites are blocked. The lists update every day, and you can turn blocking off for any site.</p>
+          <h3>Ads and trackers blocked</h3>
+          <p>Trackers, pop-up ads, ad redirects and YouTube video ads are blocked. The lists update every day, and you can turn blocking off for any site.</p>
         </article>
         <article class="tile tel">
           <h3>Nothing sent home</h3>
@@ -104,7 +104,7 @@ const schema = {
     <section class="wrap end">
       <Image src={logo} alt="" width={96} height={96} />
       <h2>Try Eddy.</h2>
-      <p class="lead">Free and open source, for Android 10 or newer. Eddy is in beta, so expect rough edges.</p>
+      <p class="lead">Free and open source, for Android 10 or newer. Eddy is in beta, so expect rough edges. New here, or updating from 0.6.14 or older? Read the <a href="/install" class="link">install guide</a>.</p>
       <div class="cta">
         <a class="btn primary" href={download}>Download APK</a>
         <a class="btn" href={source}>View source</a>
